@@ -10,7 +10,7 @@ public class Application {
 
         public static void main(String[] args) {
                   CRUDUtils crudUtils = new CRUDUtils();
-            System.out.println(crudUtils.addItem("1", "Буханка"));
+            System.out.println(crudUtils.getItems());
 
-    }
+        }
 }
