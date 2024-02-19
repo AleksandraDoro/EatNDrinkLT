@@ -1,128 +1,44 @@
 package org.example.utils;
 
 import org.example.entity.Item;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class CRUDUtils {
-    //Create Read Update Delete
 
-//    private final String ADD_STUDENT = "INSERT INTO test_table VALUES(?,?)";
-//    private final String GET_STUDENTS = "SELECT * FROM test_table";
-//    private final String UPDATE_STUDENTS = "UPDATE test_table set name = ? where id = ?";
-//    private final String DELETE_STUDENT = "Delete From test_table WHERE name = ?";
-//    private final String ORDER_STUDENT = "SELECT * FROM test_table ORDER BY id";
+    private final JdbcTemplate jdbcTemplate;
 
-    public static List<Item> addItem(String id, String name) {
-        List<Item> listItem = null;
-        CRUDUtils crudUtils = new CRUDUtils(); // Создание экземпляра CRUDUtils
-        try (Connection conn = new DBConnection().getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(QueryTypes.INSERT.getQuery())) {
-            preparedStatement.setString(1, id);
-            preparedStatement.setString(2, name);
-            preparedStatement.executeUpdate();
-            //conn.commit(); коммит уже включен по дефолту
-            listItem = crudUtils.getItems(); // Вызов метода getItems() через экземпляр класса CRUDUtils
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return listItem;
+    @Autowired
+    public CRUDUtils(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Item> getItems() {
-        List<Item> listItem = new ArrayList<>();
-        try (Connection conn = new DBConnection().getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(QueryTypes.SELECT.getQuery())) {
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String id = resultSet.getString("id");
-                String name = resultSet.getString("name");
-                listItem.add(new Item(id, name));
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return listItem;
+        String sql = "SELECT id, name FROM items_table";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            String id = rs.getString("id");
+            String name = rs.getString("name");
+            return new Item(id, name);
+        });
     }
 
-    public List<Item> updateItems(String id, String name) {
-        List<Item> listItem = new ArrayList<>();
-        try (Connection conn = new DBConnection().getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(QueryTypes.UPDATE.getQuery())) {
-            preparedStatement.setString(1, name);
-            preparedStatement.setString(2, id);
-            preparedStatement.executeUpdate();
-            //conn.commit(); коммит уже включен по дефолту
-            listItem = getItems();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return listItem;
+    public void addItem(String id, String name) {
+        String sql = "INSERT INTO items_table (id, name) VALUES (?, ?)";
+        jdbcTemplate.update(sql, id, name);
     }
 
-    public List<Item> deleteItem(String itemName) {
-        List<Item> listItem = new ArrayList<>();
-        try (Connection conn = new DBConnection().getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(QueryTypes.DELETE.getQuery())) {
-            preparedStatement.setString(1, itemName);
-            preparedStatement.executeUpdate();
-            //conn.commit(); коммит уже включен по дефолту
-            listItem = getItems();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return listItem;
+    public void updateItem(String id, String name) {
+        String sql = "UPDATE items_table SET name = ? WHERE id = ?";
+        jdbcTemplate.update(sql, name, id);
     }
 
-    public List<Item> orderItem() {
-        List<Item> listItem = new ArrayList<>();
-        try (Connection conn = new DBConnection().getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(QueryTypes.ORDER.getQuery())) {
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String id = resultSet.getString("id");
-                String name = resultSet.getString("name");
-                listItem.add(new Item(id, name));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return listItem;
-        }
-    public Item getItemById(int itemID) {
-        try (Connection conn = new DBConnection().getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(QueryTypes.SELECTID.getQuery())) {
-            preparedStatement.setString(1, String.valueOf(itemID));
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                String name = resultSet.getString("name");
-                return new Item(String.valueOf(itemID), name);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
+    public void deleteItem(String id) {
+        String sql = "DELETE FROM items_table WHERE id = ?";
+        jdbcTemplate.update(sql, id);
     }
-
-        public Item getItemByName(String itemName){
-            try (Connection conn = new DBConnection().getConnection();
-                 PreparedStatement preparedStatement = conn.prepareStatement(QueryTypes.SELECTNAME.getQuery())) {
-                preparedStatement.setString(1, itemName);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                if (resultSet.next()) {
-                    String id = resultSet.getString("id");
-                    return new Item(id, itemName);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            return null;
-        }
-    }
+}

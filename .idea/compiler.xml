@@ -9,5 +9,8 @@
         <module name="ProjectEatNDrinkLT" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ChipokLT" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
