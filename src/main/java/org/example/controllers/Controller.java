@@ -27,8 +27,8 @@ public class Controller {
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(example = "{\"id\": \"3\", \"name\": \"Nikita\"}"), mediaType = "application/json")})})
     @GetMapping(value = "/random")
-    public Item getItems() {
-        return itemService.getItem();
+    public Item getItems() {return itemService.getItem();
+
     }
 
     @Operation(summary = "Get true", description = "Возвращает в ответ всегда true.")

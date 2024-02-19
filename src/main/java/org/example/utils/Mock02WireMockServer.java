@@ -18,10 +18,10 @@ public class Mock02WireMockServer {
         stubFor(get(urlEqualTo("/api/mock02"))
                 .willReturn(aResponse()
                         .withStatus(200)
-                        .withHeader("Content-Type", "text/plain")
-                        .withBody("Goods you choose will be here at " + generateRandomDate())));
+                        .withHeader("Content-Type", "text/plain; charset=UTF-8")
+                        .withBody("Весь ассортимент нужных вам товаров появится только ДД/ММ/ГГГГ. Ждите или дойдите до магазина ногами. Мы за ЗОЖ" + generateRandomDate())));
       // !!!!!! русский язык кодируется, как исправить, непонятно, но надо
-        // "Весь ассортимент нужных вам товаров появится только ДД/ММ/ГГГГ. Ждите или дойдите до магазина ногами. Мы за ЗОЖ"
+        // "Весь ассортимент нужных вам товаров появится только ДД/ММ/ГГГГ. Ждите или дойдите до магазина ногами. Мы за ЗОЖ" Goods you choose will be here at
 
         // Ждем, пока не будет получен сигнал для остановки сервера
         System.out.println("Нажмите Enter для остановки сервера WireMock");
