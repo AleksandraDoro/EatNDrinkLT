@@ -7,8 +7,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.entity.Item;
+import org.example.service.ProductService;
 import org.example.service.ItemService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Random;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -19,21 +24,42 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @Operation(summary = "Get a random item", description = "Возвращает в ответ рандомный продукт.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(example = "{\"id\": \"2\", \"name\": \"Водка\"}"), mediaType = "application/json")})})
-    @GetMapping(value = "/random")
-    public Item getRandomItem() {
-        return itemService.getRandomItem();
-    }
+    @GetMapping("item/{itemName}")
+    public ResponseEntity<Object> getItemInfo(@PathVariable String itemName) {
+        // Инициализация переменной requestedProduct на основе имени продукта из пути запроса
+        String requestedItem = itemName;
 
-    @Operation(summary = "Get {itemName}", description = "Возвращает возвращает айди и имя продукта по имени.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(example = "{\"id\": \"1\", \"name\": \"Буханка\"}"), mediaType = "application/json")})})
-    @GetMapping(value = "itemName/{itemName}")
-    public Item getItems(@PathVariable(name = "itemName") String itemName) {
-        return itemService.getItemByName(itemName); // Передаем значение параметра itemName
+        // Далее можно использовать переменную requestedProduct для получения информации о продукте
+        // вызовом методов службы productService и возвращения результата клиенту
+
+        // Например:
+        Object itemInfo = itemService.getItem(requestedItem);
+        return ResponseEntity.ok(itemInfo);
     }
 }
+
+
+//        @Operation(summary = "Get a random item", description = "Возвращает в ответ рандомный продукт.")
+//        @ApiResponses({
+//                @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(example = "{\"id\": \"2\", \"name\": \"Водка\"}"), mediaType = "application/json")})})
+//        @GetMapping(value = "/random")
+//        public Item getRandomItem() {
+//            return itemService.getRandomItem();
+//        }
+//
+//    @Operation(summary = "Get {itemName}", description = "Возвращает возвращает айди и имя продукта по имени.")
+//    @ApiResponses({
+//            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(example = "{\"id\": \"1\", \"name\": \"Буханка\"}"), mediaType = "application/json")})})
+//    @GetMapping(value = "itemName/{itemName}")
+//    public Item getItems(@PathVariable(name = "itemName") String itemName) {
+//        return itemService.getItemByName(itemName); // Передаем значение параметра itemName
+//    }
+//public int randomNumber() {
+//    return new Random().nextInt(2);
+//
+//}
+
+
+
 
 

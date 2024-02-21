@@ -6,7 +6,7 @@
 
 - Запуск Mock02 http://localhost:8082/api/mock02
 
-java -jar wiremock.jar
+java -jar wiremock-standalone-3.3.1.jar
 --port 8082 --global-response-templating
 --container-threads 120
 --no-request-journal
