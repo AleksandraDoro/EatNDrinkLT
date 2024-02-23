@@ -20,9 +20,9 @@ public class ItemController {
     public ItemController(ProductService itemService) {
         this.itemService = itemService;
     }
-    @Operation(summary = "Получаем в ответ продукт по его имени", description = "Возвращает в ответ продукт")
+    @Operation(summary = "Получаем в ответ цену продукта по его имени", description = "Возвращает в ответ цену продукта/информацию о наличии")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(example = "{\"уплотите 200 рублей\"}"), mediaType = "application/json")})
+            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(example = "{Мясо \"Любимая бурёнка\": Срочно уплотите 800 рублей!}"), mediaType = "application/json")})
     })
     @GetMapping("item/{itemName}")
     public ResponseEntity<Object> getItemInfo(@PathVariable("itemName") String itemName) {
